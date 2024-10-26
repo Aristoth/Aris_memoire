@@ -11,7 +11,8 @@ class CreateDocumentsTable extends Migration
             $table->id();
             $table->string('filename');
             $table->string('description');
-            $table->string('type');
+            $table->enum('type')->('','','');
+            $table->string('modific');
             $table->string('hash')->unique();
             $table->timestamps();
         });

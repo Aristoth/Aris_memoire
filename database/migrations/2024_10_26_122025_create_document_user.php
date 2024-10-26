@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('document_user', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_doc');
+            $table->unsignedBigInteger('id_user');
+            $table->foreign('id_user')->references('id')->on('user')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_doc')->references('id')->on('documents')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('info_doc');
+            $table->string('info_updated');
+            $table->string('details')->references('')
             $table->timestamps();
         });
     }
