@@ -1,15 +1,11 @@
 <?php
 
-use App\Models\Document;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\UserAuthenticationController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
-
-Route::prefix('v1')->group(function () {
-    Route::get('/documents', [DocumentController::class, 'index']);
-    Route::post('/documents', [DocumentController::class, 'store']);
-    Route::get('/documents/{id}', [DocumentController::class, 'show']);
-    Route::put('/documents/{id}', [DocumentController::class, 'update']);
-    Route::delete('/documents/{id}', [DocumentController::class, 'destroy']);
-});
-
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
+Route::apiResource('documents', DocumentController::class,);

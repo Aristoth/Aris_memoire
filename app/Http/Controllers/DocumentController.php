@@ -3,31 +3,52 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
-use Illuminate\Http\Request;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
+
 
 class DocumentController extends Controller
 {
-    public function store(Request $request)
+    public function index()
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'doc_desc' => 'required|string|max:255',
-            'type' => 'required|string|max:50',
-        ]);
+        $documents = Document::all();
+        return response()->json($documents);
+    }
 
+
+    public function store(StorePostRequest $request)
+    {
         $hash = Str::uuid();  // Générer un hash unique
 
         $document = Document::create([
             'title' => $request->input('title'),
-            'doc_desc' => $request->input('doc_desc'),
+            'description' => $request->input('doc_desc'),
             'type' => $request->input('type'),
             'hash' => $hash,
         ]);
 
         return response()->json([
             'message' => 'Document enregistré avec succès.',
+            'document' => $document,
+        ]);
+    }
+
+    public function update(UpdatePostRequest $request)
+    {
+        $hash = Str::uuid();  // Générer un hash unique
+
+        $document = Document::updated([
+            'title' => $request->input('title'),
+            'description' => $request->input('doc_desc'),
+            'type' => $request->input('type'),
+            'hash' => $hash,
+        ]);
+
+        return response()->json([
+            'message' => 'Document mis à jour avec succès.',
             'document' => $document,
         ]);
     }
@@ -47,13 +68,6 @@ class DocumentController extends Controller
         ]);
     }
 
-
-    public function index()
-    {
-        $documents = Document::all();
-        return response()->json($documents);
-    }
-
     public function show($id)
     {
         $document = Document::findOrFail($id);
@@ -66,7 +80,7 @@ class DocumentController extends Controller
         Storage::disk('public')->delete('qrcodes/' . $document->hash . '.png');
         $document->delete();
 
-        return response()->json(['message' => 'Document supprimé avec succès.']);
+        return response()->json([204]);
     }
 
     public function downloadQrCode($id)

@@ -9,10 +9,9 @@ class CreateDocumentsTable extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->string('filename');
+            $table->string('title');
             $table->string('description');
-            $table->enum('type')->('','','');
-            $table->string('modific');
+            $table->string('type')->default('')->change();
             $table->string('hash')->unique();
             $table->timestamps();
         });

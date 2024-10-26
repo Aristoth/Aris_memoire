@@ -15,13 +15,16 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_doc');
             $table->unsignedBigInteger('id_user');
-            $table->foreign('id_user')->references('id')->on('user')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_user')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('id_doc')->references('id')->on('documents')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('info_doc');
-            $table->string('info_updated');
-            $table->string('details')->references('')
+            $table->string('title_original');
+            $table->string('title_updated');
+            $table->string('description_original');
+            $table->string('description_updated');
+            $table->string('type_original');
+            $table->string('type_updated');
             $table->timestamps();
-        });
+        });        
     }
 
     /**
