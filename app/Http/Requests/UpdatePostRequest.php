@@ -22,9 +22,9 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "title" => "Nouveau titre",
-            "doc_desc" => "Nouvelle description",
-            "type" => "Nouveau type"
+            'title' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+            'type' => 'required|string|max:255',
         ];
     }
 }

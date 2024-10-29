@@ -5,13 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
+use Nette\Schema\Expect;
 
-
-class DocumentController extends Controller
+class DocumentController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return[
+            new Middleware('auth:sanctum', except: ['index', 'show'])
+        ];
+    }
+
+    
     public function index()
     {
         $documents = Document::all();
@@ -23,36 +33,40 @@ class DocumentController extends Controller
     {
         $hash = Str::uuid();  // Générer un hash unique
 
-        $document = Document::create([
+        $document = $request->user()->documents()->create([
             'title' => $request->input('title'),
-            'description' => $request->input('doc_desc'),
+            'description' => $request->input('description'),
             'type' => $request->input('type'),
             'hash' => $hash,
         ]);
 
         return response()->json([
-            'message' => 'Document enregistré avec succès.',
+            'message' => 'Document recorded sucessfully',
             'document' => $document,
         ]);
     }
 
-    public function update(UpdatePostRequest $request)
+    public function update(UpdatePostRequest $request, $id)
     {
-        $hash = Str::uuid();  // Générer un hash unique
-
-        $document = Document::updated([
+        $hash = Str::uuid();  // Generate a unique hash
+    
+        // Find the document by its ID
+        $document = Document::findOrFail($id);
+    
+        // Update the document
+        $document->update([
             'title' => $request->input('title'),
-            'description' => $request->input('doc_desc'),
+            'description' => $request->input('description'),
             'type' => $request->input('type'),
             'hash' => $hash,
         ]);
-
+        $updatedDocument = $document->fresh();
         return response()->json([
-            'message' => 'Document mis à jour avec succès.',
-            'document' => $document,
+            'message' => 'Document updated successfully.',
+            'document' => $updatedDocument, 
         ]);
     }
-
+    
 
     public function generateQrCode($id)
     {
@@ -80,7 +94,7 @@ class DocumentController extends Controller
         Storage::disk('public')->delete('qrcodes/' . $document->hash . '.png');
         $document->delete();
 
-        return response()->json([204]);
+        return response()->json(['message' => 'The document has been deleted sucessfully']);
     }
 
     public function downloadQrCode($id)

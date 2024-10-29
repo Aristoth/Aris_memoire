@@ -10,4 +10,8 @@ class Document extends Model
     use HasFactory;
 
     protected $fillable = ['title', 'description', 'type', 'hash'];
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
 }

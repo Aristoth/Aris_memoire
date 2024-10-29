@@ -9,8 +9,9 @@ class CreateDocumentsTable extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('description');
+            $table->string('title')->default('Untitled');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('description')->defaut('No description provided');
             $table->string('type')->default('')->change();
             $table->string('hash')->unique();
             $table->timestamps();
